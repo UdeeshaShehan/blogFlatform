@@ -1,0 +1,79 @@
+import React from "react";
+import { useState, useEffect } from "react";
+import { signUp, isAuth } from "../../actions/auth";
+import Router from "next/router";
+
+const SignUpComponent = () => {
+
+    const [values, setValues] = useState({
+        name: 'Udeesha',
+        email: 'udeesha1@gmail.com',
+        password: '111111',
+        error: '',
+        loading: false,
+        message: '',
+        showForm: true
+    });
+
+    useEffect(() => {
+        isAuth() && Router.push('/');
+    },[]);
+
+    const {name, email, password, error, loading, message, showForm} = values;
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.table({name, email, password, error, loading, message, showForm});
+        setValues({...values, error:false, loading:true});
+        const user = {name, email, password}
+        signUp(user).then(data => {
+            if(data.error) {
+                setValues({...values, error: data.error, loading:false});
+            } else {
+                setValues({...values, name: '', email:'', password:'', error:'', loading:false, message: data.message, showForm:false});
+            }
+        });
+    };
+
+    const handleChange = name => (e) => {
+        console.log(e.target.value);
+        setValues({... values, error:false, [name]: e.target.value});
+    }
+
+    const showError = () => error? <div className="alert alert-danger">{error}</div>: '';
+    const showLoading = () => loading? <div className="alert alert-info">Loading ...</div> : '';
+    const showMessage = () => message? <div className="alert alert-info">{message}</div> : '';
+
+    const SignForm = () => {
+        return (
+        <div>
+            
+            <form onSubmit = {handleSubmit}>
+                <div className="form-group">
+                    <input value = {name} onChange = {handleChange('name')} type="text" className="form-control" placeholder="Type your Name"/>
+                </div>
+                <div className="form-group">
+                    <input value = {email} onChange = {handleChange('email')} type="email" className="form-control" placeholder="Type your Email"/>
+                </div>
+                <div className="form-group">
+                    <input value = {password} onChange = {handleChange('password')} type="password" className="form-control" placeholder="Type your Password"/>
+                </div>
+                <div>
+                    <button className="btn btn-primary">Signup</button>
+                </div>
+            </form>
+        </div>
+        );
+    };
+
+    return (
+        <React.Fragment>
+            {showError()}
+            {showLoading()}
+            {showMessage()}
+            {showForm && SignForm()}
+        </React.Fragment>
+    );
+};
+
+export default SignUpComponent;
