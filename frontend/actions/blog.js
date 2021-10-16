@@ -3,15 +3,26 @@ import queryString from 'query-string';
 
 import {API} from '../config';
 
+import { isAuth, handleResponse } from './auth';
+
 export const create = (blog, token) => {
-    return fetch(`${API}/blog`, {
+    let url;
+    if (isAuth() && isAuth().role === 1) {
+        url = `${API}/blog`;
+    } else if(isAuth()) {
+        url = `${API}/user/blog`;
+    }
+    return fetch(url, {
         method: 'POST',
         headers: {
             'Accept':'application/json',
             'Authorization':`Bearer ${token}`
         },
         body:blog
-    }).then(res => res.json()).catch(err => console.log(err));
+    }).then(res => {
+        handleResponse(res);
+        return res.json();
+    } ).catch(err => console.log(err));
 };
 
 export const listBlogsWithCategoriesAndTags = (skip, limit) => {
@@ -41,30 +52,56 @@ export const listRelated = (blog) => {
     }).then(res => res.json()).catch(err => console.log(err));
 };
 
-export const listBlogs = slug => fetch(`${API}/blogs`, {method:'GET'}).
+export const listBlogs = userName => {
+    let url;
+    if (userName) {
+        url = `${API}/${userName}/blogs`;
+    } else {
+        url = `${API}/blogs`;
+    }
+    return fetch(url, {method:'GET'}).
 then(response => response.json()).
-catch(error => console.log(error));
+catch(error => console.log(error))
+};
 
 export const remove = (slug, token) => {
-    return fetch(`${API}/blog/${slug}`, {
+    let url;
+    if (isAuth() && isAuth().role === 1) {
+        url = `${API}/blog/${slug}`;
+    } else if(isAuth()) {
+        url = `${API}/user/blog/${slug}`;
+    }
+    return fetch(url, {
         method: 'DELETE',
         headers: {
             'Accept':'application/json',
             'Content-Type':'application/json',
             'Authorization':`Bearer ${token}`
         }
-    }).then(res => res.json()).catch(err => console.log(err));
+    }).then(res => {
+        handleResponse(res);
+        return res.json();
+    }).catch(err => console.log(err));
 };
 
 export const update = (blog, token, slug) => {
-    return fetch(`${API}/blog/${slug}`, {
+    let url;
+    if (isAuth() && isAuth().role === 1) {
+        url = `${API}/blog/${slug}`;
+    } else if(isAuth()) {
+        url = `${API}/user/blog/${slug}`;
+    }
+    return fetch(url, {
         method: 'PUT',
         headers: {
             'Accept':'application/json',
             'Authorization':`Bearer ${token}`
         },
         body:blog
-    }).then(res => res.json()).catch(err => console.log(err));
+    }).then(res => {
+        handleResponse(res);
+        return res.json();
+    }).catch(err => console.log(err));
 };
 
 export const listSearch = (params) => {

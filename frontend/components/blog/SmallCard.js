@@ -9,7 +9,7 @@ const SmallCard = ({blog}) => {
             <section>
                 <Link href={`/blogs/${blog.slug}`}>
                     <a>
-                        <img className="img img-fluid" style={{maxHeight:'auto', width:'100%'}} src={`${API}/blog/photo/${blog.slug}`} alt={blog.title}/>
+                        <img className="img img-fluid" style={{height:'250px', width:'100%'}} src={`${API}/blog/photo/${blog.slug}`} alt={blog.title}/>
                     </a>
                 </Link>
             </section>
@@ -25,9 +25,8 @@ const SmallCard = ({blog}) => {
             </div>
             <div className="card-body">
                 <p className="mark ml-1 pt-2 pb-2">Published {moment(blog.updatedAt).fromNow() } | Written By 
-                <Link href={`/`}>
-                    <a className="float-right">{blog.postedBy.name}</a>
-                </Link> </p>
+                <Link href={`/profile/${blog.postedBy.userName}`}><a className="float-right">{blog.postedBy.name}</a></Link>
+                </p>
             </div>
         </div>
         

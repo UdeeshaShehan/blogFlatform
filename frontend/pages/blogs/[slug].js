@@ -1,7 +1,6 @@
 import React , { useState, useEffect } from "react";
 import Head from 'next/head';
 import Link from 'next/link';
-import { withRouter } from "next/router";
 import renderHTML from 'react-render-html';
 import moment from 'moment';
 
@@ -9,6 +8,7 @@ import Layout from '../../components/Layout';
 import { singleBlog, listRelated } from "../../actions/blog";
 import { API, DOMAIN, APP_NAME, FB_APP_ID } from "../../config";
 import SmallCard from "../../components/blog/SmallCard";
+import DisqusThread from "../../components/DisqusThread";
 
 const SingleBlog = ({blog}) => {
     const [related, setRelated] = useState([]);
@@ -75,6 +75,14 @@ const SingleBlog = ({blog}) => {
 
     };
 
+    const showComment = () => {
+        return (
+            <div>
+                <DisqusThread id={blog._id} title={blog.title} path={`/blog/${blog.slug}`}/>
+            </div>
+        );
+    }
+
     return(
         <React.Fragment>
             {head()}
@@ -91,7 +99,7 @@ const SingleBlog = ({blog}) => {
                                 <div className="container">
                                     <h1 className="display-2 pb-3 pt-3 text-center font-weight-bold">{blog.title}</h1>
                                     <p className="lead mt-3 mark">
-                                        Written By {blog.postedBy.name} | Published {moment(blog.updatedAt).fromNow() }
+                                        Written By <Link href={`/profile/${blog.postedBy.userName}`}><a >{blog.postedBy.name}</a></Link> | Published {moment(blog.updatedAt).fromNow() }
                                     </p>
                                     <div className="pb-3">
                                         {showCategories(blog)}
@@ -115,7 +123,7 @@ const SingleBlog = ({blog}) => {
                             </div>
                         </div>
                         <div className="container pb-5">
-                            <p>Show comments</p>
+                            {showComment()}
                         </div>
                     </article>
                 </main>

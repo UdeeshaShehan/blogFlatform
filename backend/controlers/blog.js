@@ -7,6 +7,7 @@ const fs = require('fs');
 const Blog = require('../models/blog');
 const Category = require('../models/category');
 const Tag = require('../models/tag');
+const User = require('../models/user');
 
 const {errorHandler} = require('../helpers/dbErrorHandler');
 const {smartTrim} = require('../helpers/blog');
@@ -274,7 +275,7 @@ exports.listRelated = (req, res) => {
     const {_id, categories} =  req.body.blog;
     Blog.find({_id:{$ne:_id}, categories:{$in:categories}})
     .limit(limit)
-    .populate('postedBy' , '_id name profile' )
+    .populate('postedBy' , '_id name profile userName' )
     .select('title slug excerpt postedBy createdAt updatedAt')
     .exec((err, blogs) => {
         if(err) {
@@ -301,4 +302,31 @@ exports.listSearch = (req, res) => {
             res.json(data);
         }).select('-photo -body');
     }
+}
+
+exports.listByUser = (req, res) => {
+
+    User.findOne({userName: req.params.userName}).exec((err, user) => {
+        if(err) {
+            return res.status(400).json({
+                error: errorHandler(err)
+            });
+        }
+
+        let userId = user._id;
+        Blog.find({postedBy: userId})
+        .populate('categories', '_id name slug')
+        .populate('tags', '_id name slug')
+        .populate('postedBy', '_id name userName')
+        .select('_id title slug categories tags postedBy createdATt updateAt')
+        .exec((error, data) => {
+            if (error) {
+                return res.status(400).json({
+                    error: errorHandler(error)
+                });
+            }
+            res.json(data);
+        })
+    })
+
 }

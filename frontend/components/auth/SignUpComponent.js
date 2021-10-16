@@ -1,7 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { signUp, isAuth } from "../../actions/auth";
+import { signUp, isAuth, preSignUp } from "../../actions/auth";
 import Router from "next/router";
+import Link from "next/link";
 
 const SignUpComponent = () => {
 
@@ -23,10 +24,9 @@ const SignUpComponent = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.table({name, email, password, error, loading, message, showForm});
         setValues({...values, error:false, loading:true});
         const user = {name, email, password}
-        signUp(user).then(data => {
+        preSignUp(user).then(data => {
             if(data.error) {
                 setValues({...values, error: data.error, loading:false});
             } else {
@@ -36,7 +36,6 @@ const SignUpComponent = () => {
     };
 
     const handleChange = name => (e) => {
-        console.log(e.target.value);
         setValues({... values, error:false, [name]: e.target.value});
     }
 
@@ -72,6 +71,10 @@ const SignUpComponent = () => {
             {showLoading()}
             {showMessage()}
             {showForm && SignForm()}
+            <br/>
+            <Link href="/auth/password/forgot">
+                <a className="btn btn-outline-danger">Forgot Password</a>
+            </Link>
         </React.Fragment>
     );
 };

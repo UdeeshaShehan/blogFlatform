@@ -30,7 +30,7 @@ const Card = ({blog}) => {
                 </Link>
             </header>
             <section>
-                <p className="mark ml-1 pt-2 pb-2">Written By {blog.postedBy.name} | Published {moment(blog.updatedAt).fromNow() }</p>
+                <p className="mark ml-1 pt-2 pb-2">Written By <Link href={`/profile/${blog.postedBy.userName}`}><a>{blog.postedBy.name}</a></Link> | Published {moment(blog.updatedAt).fromNow() }</p>
             </section>
             <section>
                 <p>Blog categories and Tags</p>

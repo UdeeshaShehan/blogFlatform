@@ -2,6 +2,8 @@ import Router from "next/router";
 import React from "react";
 import { useState, useEffect } from "react";
 import { signIn, authenticate, isAuth } from "../../actions/auth";
+import Link from "next/link";
+import LoginGoogle from "./LoginGoogle";
 
 const SignInComponent = () => {
 
@@ -76,7 +78,12 @@ const SignInComponent = () => {
             {showError()}
             {showLoading()}
             {showMessage()}
+            <LoginGoogle/>
             {showForm && SignForm()}
+            <br/>
+            <Link href="/auth/password/forgot">
+                <a className="btn btn-outline-danger">Forgot Password</a>
+            </Link>
         </React.Fragment>
     );
 };

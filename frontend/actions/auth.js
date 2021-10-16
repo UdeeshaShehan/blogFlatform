@@ -1,16 +1,43 @@
 import fetch from 'isomorphic-fetch';
 import {API} from '../config';
 import Cookies from 'js-cookie';
+import Router from "next/router";
 
+export const handleResponse = response => {
+    if (response.status === 401) {
+        signOut(() => {
+            Router.push({
+                pathname:'/signin',
+                query: {
+                    message: 'Your session is expired. Please Sign In'
+                }
+            });
+        })
+    } else{
+        return;
+    }
+}
 
-export const signUp = user => {
-    return fetch(`${API}/signup`, {
+export const preSignUp = user => {
+    return fetch(`${API}/pre-signup`, {
         method: 'POST',
         headers: {
             'Accept':'application/json',
             'Content-Type':'application/json'
         },
         body:JSON.stringify(user)
+    }).then(res => res.json()).catch(err => console.log(err));
+};
+
+export const signUp = token => {
+    console.log('lllll', JSON.stringify(token));
+    return fetch(`${API}/signup`, {
+        method: 'POST',
+        headers: {
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(token)
     }).then(res => res.json()).catch(err => console.log(err));
 };
 
@@ -80,7 +107,6 @@ export const isAuth = () => {
         const cookieChecked = getCookie('token');
         if (cookieChecked) {
             const user = localStorage.getItem('user');
-            console.log('user', user);
             if (user) {
                 return JSON.parse(user);
             } else {
@@ -90,9 +116,51 @@ export const isAuth = () => {
     }
 }
 
+export const updateUser = (user, next) => {
+    if (process.browser) {
+        if (localStorage.getItem('user')) {
+            localStorage.setItem('user', JSON.stringify(user));
+            next();
+        }
+    }
+}
 
+export const forgotPassword = email => {
+    return fetch(`${API}/forgot-password`, {
+        method: 'PUT',
+        headers: {
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(email)
+    }).then(res => res.json()).catch(err => console.log(err));
+};
 
+export const resetPassword = resetInfo => {
+    return fetch(`${API}/reset-password`, {
+        method: 'PUT',
+        headers: {
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(resetInfo)
+    }).then(res => res.json()).catch(err => console.log(err));
+};
 
+export const loginWithGoogle = user => {
+    return fetch(`${API}/google-login`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => console.log(err));
+};
 
 
 
