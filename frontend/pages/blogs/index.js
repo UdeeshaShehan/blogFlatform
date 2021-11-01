@@ -9,6 +9,7 @@ import Layout from '../../components/Layout';
 import { listBlogsWithCategoriesAndTags } from "../../actions/blog";
 import { API, DOMAIN, APP_NAME, FB_APP_ID } from "../../config";
 import Card from "../../components/blog/Card";
+import Search from "../../components/blog/Search";
 
 const Blogs = ({blogs, categories, tags, totalBlogs, blogLimit, blogSkip, router}) => {
     const head = () => (
@@ -95,6 +96,7 @@ const Blogs = ({blogs, categories, tags, totalBlogs, blogLimit, blogSkip, router
             <React.Fragment>
                 {head()}
                 <Layout>
+                <Search/>
                     <main>
                         <div className="container-fluid">
                             <header>

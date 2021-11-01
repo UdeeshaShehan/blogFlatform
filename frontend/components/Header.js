@@ -21,6 +21,7 @@ import nProgress from 'nprogress';
 import { APP_NAME } from '../config';
 import { signOut, isAuth } from '../actions/auth';
 import Search from './blog/Search';
+import HeaderDrawer from './header/header';
 
 Router.onRouteChangeStart = url => nProgress.start();
 Router.onRouteChangeComplete = url => nProgress.done();
@@ -28,6 +29,16 @@ Router.onRouteChangeError = url => nProgress.done();
 
 const Header = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const [isSticky, setIsSticky] = useState(false);
+
+  const handleStateChange = (status) => {
+    if (status.status === Sticky.STATUS_FIXED) {
+      setIsSticky(true);
+    } else if (status.status === Sticky.STATUS_ORIGINAL) {
+      setIsSticky(false);
+    }
+  };
 
   const toggle = () => setIsOpen(!isOpen);
 
@@ -93,7 +104,6 @@ const Header = (props) => {
           </Nav>
         </Collapse>
       </Navbar>
-      <Search/>
     </React.Fragment>
   );
 }
